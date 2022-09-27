@@ -9,7 +9,9 @@ import bo.DoctorInputer;
 import bo.DoctorManagement;
 import entity.Doctor;
 import java.util.ArrayList;
+import java.util.Collections;
 import ultils.Validation;
+
 /**
  *
  * @author My PC
@@ -19,37 +21,88 @@ public class DoctorManagerController {
     private DoctorInputer doctorInputer;
     private DoctorManagement doctorManager;
 
-    public DoctorManagerController(){
+    public DoctorManagerController() {
         doctorManager = new DoctorManagement();
     }
-    
-    private Doctor inputDoctor(Doctor d) {
+
+    private Doctor inputDoctor() {
         doctorInputer = new DoctorInputer();
-        doctorInputer.inputCommonInformation();
-        d = doctorInputer.getDoctor();
-        doctorManager.addDoctor(d);
-        return d;
+        Doctor d = doctorInputer.inputCommonInformation();
+        if (doctorManager.checkIsExist(d)) {
+            return d;
+        } else {
+            System.err.println("Dupplicate code!");
+            System.out.println("Enter again");
+            return inputDoctor();
+        }
     }
 
-    private Doctor inputInDoctor() {
-        Doctor d = new Doctor();
-        inputDoctor(d);
-        return d;
+    public Doctor addAllDoctor() throws Exception {
+        if (doctorManager.addDoctor(inputDoctor())) {
+            return doctorInputer.getDoctor();
+        }
+        throw new Exception("Add Fail");
     }
 
-    public void addDoctor() {
-        ArrayList<Doctor> ret = new ArrayList<>();
-        do {
-            ret.add(inputInDoctor());
-        } while (Validation.pressYNtoContinue("Do you want to continue? (Y/N): "));
+    public void displayAllDocotor() {
+        for (Doctor o : doctorManager.getDoctorsList()) {
+            System.out.println(o);
+        }
     }
-    
-    private void displayAllDoctor() {
-        System.out.println("List of Doctor:");
-        System.out.println(doctorManager);
+
+    public void deleteDoctor() throws Exception {
+
+        doctorInputer = new DoctorInputer();
+        Doctor d = doctorInputer.inputDoctorCodeToDelete();
+        try {
+            if (!doctorManager.checkIsExist(d)) {
+                doctorManager.deleteDoctorByCode(d.getCode());
+                System.out.println("Delete successful!");
+            } else {
+                System.err.println("Not found or something went wrong with the code!");
+                System.out.println("Enter again!");
+                deleteDoctor();
+            }
+        } catch (Exception e) {
+            System.err.println("Not found!");
+            deleteDoctor();
+        }
+
     }
-    
-    public void searching() {
+
+    public void updateDoctor() {
+        System.out.println("Enter doctor's code you want to update: ");
+        String code = Validation.inputString();
+        ArrayList<Doctor> list = doctorManager.searchByNameAndCode(code);
+        if (list.isEmpty()) {
+            System.out.println("Doctor's code not found!");
+        } else {
+            try {
+                System.out.println("Found " + list.size() + " doctor(s) with code " + code);
+                report(list);
+                int choose = Validation.getInt("Choose doctor you want to update (from [1] to [...]: ", "Integer only!", "Enter from 1 to [" + String.valueOf(list.size()) + "]", 0, list.size());
+                Doctor doctor = list.get(choose - 1);
+                doctorInputer.updateDoctorInformation(doctor);
+            } catch (Exception e) {
+                System.err.println("Something went wrong with the input!");
+            }
+        }
+    }
+
+    private void sort(ArrayList<Doctor> list) {
+        Collections.sort(list, (Doctor s1, Doctor s2) -> s1.getName().compareTo(s2.getName()));
+    }
+
+    private void report(ArrayList<Doctor> doctors) {
+        System.out.printf("\t%-22s%-22s%-22s%-22s\n", "Code", "Name", "Specialization", "Availability");
+        int index = 0;
+        for (Doctor doctor : doctors) {
+            index++;
+            System.out.printf("[" + "%d" + "]\t" + "%-22s%-22s%-22s%-22d\n", index, doctor.getCode(), doctor.getName(), doctor.getSpecialization(), doctor.getAvailability());
+        }
+    }
+
+    public void searchingDoctor() {
         System.out.println("Enter text: ");
         String text = Validation.inputString();
         ArrayList<Doctor> listFound = doctorManager.searchByNameAndCode(text);
@@ -57,11 +110,10 @@ public class DoctorManagerController {
             System.out.println("Not found!");
         } else {
             System.out.println("The Doctors found:");
-            for (Doctor c : listFound) {
-                System.out.println(c);
-            }
+            sort(listFound);
+            report(listFound);
         }
 
     }
-    
+
 }
