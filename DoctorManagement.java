@@ -7,12 +7,7 @@ package bo;
 
 import java.util.ArrayList;
 import entity.Doctor;
-import ultils.Validation;
 
-/**
- *
- * @author My PC
- */
 public class DoctorManagement {
 
     private ArrayList<Doctor> doctors;
@@ -21,20 +16,24 @@ public class DoctorManagement {
         doctors = new ArrayList<>();
     }
 
-    public void report() {
-        System.out.printf("%-22s%-22s%-22s%-22s\n", "Code", "Name", "Specialization", "Availability");
-        for (Doctor doctor : doctors) {
-            System.out.printf("%-22s%-22s%-22s%-22d\n", doctor.getCode(), doctor.getName(), doctor.getSpecialization(), doctor.getAvailability());
+    public ArrayList<Doctor> getDoctorsList() {
+        return doctors;
+    }
+
+    public boolean addDoctor(Doctor d) {
+        if (!checkIsExist(d)) {
+            doctors.add(d);
         }
+        return doctors.add(d);
     }
 
-    public DoctorManagement(ArrayList<Doctor> doctors) {
-        this.doctors = doctors;
-    }
-
-    public Doctor addDoctor(Doctor c) {
-        doctors.add(c);
-        return c;
+    public boolean checkIsExist(Doctor d) {
+        for (int i = 0; i < doctors.size(); i++) {
+            if (doctors.get(i).getCode().contains(d.getCode())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Doctor updateDoctor(String code, Doctor c) throws Exception {
@@ -55,9 +54,9 @@ public class DoctorManagement {
         throw new Exception("Doctor does not exist!");
     }
 
-    private int searchByCode(String code) {
+    public int searchByCode(String code) {
         for (int index = 0; index < doctors.size(); index++) {
-            if (doctors.get(index).getCode() == null ? code == null : doctors.get(index).getCode().equals(code)) {
+            if (doctors.get(index).getCode().equals(code)) {
                 return index;
             }
         }
@@ -66,16 +65,22 @@ public class DoctorManagement {
 
     public Doctor getDoctorByCode(String code) throws Exception {
         int index = searchByCode(code);
-        if (index != -1) {
-            return doctors.get(index);
+        try {
+            if (index != -1) {
+                return doctors.get(index);
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            System.out.println("Code not found!");
         }
-        throw new Exception("Id not found");
+        return null;
     }
 
     public ArrayList<Doctor> searchByNameAndCode(String text) {
         ArrayList<Doctor> ret = new ArrayList<>();
         for (Doctor c : doctors) {
-            if ((c.getName().toLowerCase().contains(text.toLowerCase())) && (c.getCode().toLowerCase().contains(text.toLowerCase()))) {
+            if ((c.getName().toLowerCase().contains(text.toLowerCase())) || (c.getCode().toLowerCase().contains(text.toLowerCase()))) {
                 ret.add(c);
             }
         }
