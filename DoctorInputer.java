@@ -37,13 +37,13 @@ public class DoctorInputer {
     }
     
 
-    public void updateDoctorInformation(Doctor doctors) {
+    public Doctor updateDoctorInformation(Doctor doctors) {
         System.out.printf("Enter new code: ");
         doctors.setCode(Validation.inputString());
         doctors.setName(Validation.getStringByRegex("Enter new name: ", "Character only! ", "[A-Za-z ]+"));
         doctors.setSpecialization(Validation.getStringByRegex("Enter new specialization: ", "Character only! ", "[A-Za-z ]+"));
         doctors.setAvailability(Validation.getInt("Enter new availability: ", "Integer only!", "Please enter from [0-9]", 0, 9));
-        System.out.println("Update successfully!");
+        return doctors;
     }
     
 }
