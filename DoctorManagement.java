@@ -7,6 +7,7 @@ package bo;
 
 import java.util.ArrayList;
 import entity.Doctor;
+import java.util.Collections;
 
 public class DoctorManagement {
 
@@ -20,20 +21,20 @@ public class DoctorManagement {
         return doctors;
     }
 
-    public boolean addDoctor(Doctor d) {
+    public boolean addDoctor(Doctor d) throws Exception {
         if (!checkIsExist(d)) {
-            doctors.add(d);
+           return doctors.add(d);
         }
-        return doctors.add(d);
+        throw new Exception("Doctor code already exist");
     }
 
     public boolean checkIsExist(Doctor d) {
         for (int i = 0; i < doctors.size(); i++) {
             if (doctors.get(i).getCode().contains(d.getCode())) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public Doctor updateDoctor(String code, Doctor c) throws Exception {
@@ -65,16 +66,11 @@ public class DoctorManagement {
 
     public Doctor getDoctorByCode(String code) throws Exception {
         int index = searchByCode(code);
-        try {
-            if (index != -1) {
-                return doctors.get(index);
-            } else {
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            System.out.println("Code not found!");
+        if (index != -1) {
+            return doctors.get(index);
         }
-        return null;
+        throw new Exception();
+
     }
 
     public ArrayList<Doctor> searchByNameAndCode(String text) {
@@ -86,5 +82,18 @@ public class DoctorManagement {
         }
         return ret;
     }
+    
+    private void sort(ArrayList<Doctor> list) {
+        Collections.sort(list, (Doctor s1, Doctor s2) -> s1.getName().compareTo(s2.getName()));
+    }
 
+    public void report(ArrayList<Doctor> doctors) {
+        System.out.printf("\t%-22s%-22s%-22s%-22s\n", "Code", "Name", "Specialization", "Availability");
+        int index = 0;
+        sort(doctors);
+        for (Doctor doctor : doctors) {
+            index++;
+            System.out.printf("[" + "%d" + "]\t" + "%-22s%-22s%-22s%-22d\n", index, doctor.getCode(), doctor.getName(), doctor.getSpecialization(), doctor.getAvailability());
+        }
+    }
 }
