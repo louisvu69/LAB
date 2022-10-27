@@ -1,79 +1,74 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ui;
 
-import java.util.ArrayList;
-import ultils.Validation;
-import bo.MatrixCaculator;
-import entity.Matrix;
+import entity.Worker;
+import utils.Validation;
+import controller.WorkerManagerController;
 
-/**
- *
- * @author My PC
- */
 public class Menu {
 
     boolean isExit;
-    private MatrixCaculator calculator = new MatrixCaculator();
-    private Matrix m1 = new Matrix();
-    private Matrix m2 = new Matrix();
+    private WorkerManagerController controller = new WorkerManagerController();
 
     public void displayMenu() {
-        System.out.println("=========Calculator program===========");
-        System.out.println("1. Addition Matrix");
-        System.out.println("2. Subtraction Matrix");
-        System.out.println("3. Multiplication Matrix");
-        System.out.println("4. Quit");
-        System.out.print("Your choice: ");
+        System.out.println("========= Worker Managerment =========");
+        System.out.println("    1.Add Worker");
+        System.out.println("    2.Increase salary for worker.");
+        System.out.println("    3.Decrease for worker.");
+        System.out.println("    4.Show adjusted salary worker information.");
+        System.out.println("    5.Exit");
     }
 
     public int getChoice() {
-        return Validation.getInt("", "Invalid input", "Please enter from 1 to 4 ", 1, 4);
+        return Validation.getInt("", "Invalid input", "Please enter from 1 to 5 ", 1, 5);
     }
 
     public void run(int choice) throws Exception {
-        try {
 
+        try {
             switch (choice) {
                 case 1:
-                    System.out.println("Enter your matrix's data: ");
-                    m1.inputMatrix("1");
-                    m2.inputMatrix("2");
-                    if (calculator.checkIfAddable(m1, m2)) {
-                        calculator.displayAdditionResult(m1, m2);
-                    } else {
-                        System.err.println("Two matrices are not the same!");
+                    try {
+                        do {
+                            Worker addWorker = controller.addWorker();
+                            if (addWorker != null) {
+                                System.err.println("Add success!");
+                                System.out.println(addWorker);
+                            }
+                        } while (Validation.pressYNtoContinue("Do you want to continue? (Y/N): "));
+                    } catch (Exception e) {
+
                     }
                     break;
                 case 2:
-                    System.out.println("Enter your matrix's data: ");
-                    m1.inputMatrix("1");
-                    m2.inputMatrix("2");
-                    if (calculator.checkIfSubtractable(m1, m2)) {
-                        calculator.displaySubtractionResult(m1, m2);
-                    } else {
-                        System.err.println("Two matrices are not the same!");
+                    try {
+                        Worker increseWorkerSalary = controller.increaseWokerSalary();
+                        System.err.println("Update success!");
+                        System.out.println(increseWorkerSalary);
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
                     }
                     break;
                 case 3:
-                    System.out.println("Enter your matrix's data: ");
-                    m1.inputMatrix("1");
-                    m2.inputMatrix("2");
-                    if (calculator.checkIfMultiplicable(m1, m2)) {
-                        calculator.displayMultiplicationResult(m1, m2);
-                    } else {
-                        System.err.println("Matrix 1's column does not match with matrix 2's row!");
+                    try {
+                        Worker decreaseWorkerSalary = controller.decreaseWorkerSalary();
+                        System.out.println("Update success!");
+                        System.out.println(decreaseWorkerSalary);
+                    } catch (Exception ex) {
+                        System.err.println(ex.getMessage());
                     }
                     break;
                 case 4:
-                    isExit = true;
+                    controller.displayAdjustedWorkerList();
                     break;
+                case 5:
+                    isExit = true;
+                    System.out.println("Latta boi!");
+                    return;
             }
         } catch (Exception e) {
+//                e.printStackTrace();
             System.err.println(e.getMessage());
         }
     }
+
 }
