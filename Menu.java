@@ -4,49 +4,76 @@
  * and open the template in the editor.
  */
 package ui;
-import bo.DoctorInputer;
+
+import java.util.ArrayList;
 import ultils.Validation;
-import controller.DoctorManagerController;
-import bo.DoctorManagement;
+import bo.MatrixCaculator;
+import entity.Matrix;
+
 /**
  *
  * @author My PC
  */
 public class Menu {
-    
-    public Boolean isExit = false;
-    private DoctorManagement functions = new DoctorManagement();
-    private DoctorManagerController controller = new DoctorManagerController();
+
+    boolean isExit;
+    private MatrixCaculator calculator = new MatrixCaculator();
+    private Matrix m1 = new Matrix();
+    private Matrix m2 = new Matrix();
+
     public void displayMenu() {
-        System.out.println("======== Student Management ========");
-        System.out.println("   1. Create");
-        System.out.println("   2. Show all ");
-        System.out.println("   3. Update/Delete ");
-        System.out.println("   4. Report ");
-        System.out.println("   5. Exit");
+        System.out.println("=========Calculator program===========");
+        System.out.println("1. Addition Matrix");
+        System.out.println("2. Subtraction Matrix");
+        System.out.println("3. Multiplication Matrix");
+        System.out.println("4. Quit");
+        System.out.print("Your choice: ");
     }
 
     public int getChoice() {
-        return Validation.inputInt();
+        return Validation.getInt("", "Invalid input", "Please enter from 1 to 4 ", 1, 4);
     }
 
-    public void run(int choice) {
-        switch (choice) {
-            case 1:
-                controller.addDoctor();
-                break;
-            case 2:
-                controller.searching();
-                break;
-            case 3:
-               
-                break;
-            case 4:
-               
-                break;
-            case 5:
-                isExit = true;
-                break;
+    public void run(int choice) throws Exception {
+        try {
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter your matrix's data: ");
+                    m1.inputMatrix("1");
+                    m2.inputMatrix("2");
+                    if (calculator.checkIfAddable(m1, m2)) {
+                        calculator.displayAdditionResult(m1, m2);
+                    } else {
+                        System.err.println("Two matrices are not the same!");
+                    }
+                    break;
+                case 2:
+                    System.out.println("Enter your matrix's data: ");
+                    m1.inputMatrix("1");
+                    m2.inputMatrix("2");
+                    if (calculator.checkIfSubtractable(m1, m2)) {
+                        calculator.displaySubtractionResult(m1, m2);
+                    } else {
+                        System.err.println("Two matrices are not the same!");
+                    }
+                    break;
+                case 3:
+                    System.out.println("Enter your matrix's data: ");
+                    m1.inputMatrix("1");
+                    m2.inputMatrix("2");
+                    if (calculator.checkIfMultiplicable(m1, m2)) {
+                        calculator.displayMultiplicationResult(m1, m2);
+                    } else {
+                        System.err.println("Matrix 1's column does not match with matrix 2's row!");
+                    }
+                    break;
+                case 4:
+                    isExit = true;
+                    break;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 }

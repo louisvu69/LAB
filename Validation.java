@@ -3,11 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package utils;
+package ultils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static java.lang.System.in;
 import java.util.Scanner;
 
 /**
@@ -16,71 +14,19 @@ import java.util.Scanner;
  */
 public class Validation {
 
-    private static String EMAIL_VERIFICATION = "^([\\w-\\.]+){1,64}@([\\w&&[^_]]+){2,255}.[a-z]{2,}$";
     private static final Scanner sc = new Scanner(System.in);
 
-    public static boolean pressYNtoContinue(String mess) {
-        String input = getStringByRegex(mess, "Y/N only!!!", "[YNyn]");
-        return input.equalsIgnoreCase("y");
-    }
-
-    public static double getDouble(String msg, double min, double max) {
-        String str;
-        double choice;
-        do {
-            try {
-                System.out.print(msg);
-                str = sc.nextLine().trim();
-                if (str.isEmpty()) {
-                    System.err.println("Not empty!");
-                    continue;
-                }
-                choice = Double.parseDouble(str);
-                if (choice < min || choice > max) {
-                    throw new Exception();
-                }
-                break;
-            } catch (Exception e) {
-                System.err.println("Input must be in range from " + min + " to " + max);
-            }
-
-        } while (true);
-        return choice;
-    }
-
-    public static String getInputDate(String msg, String errorDateMsg) {
-        System.out.println(msg);
-        String result = "";
+    public static int checkInputInt() {
         while (true) {
             try {
-                result = sc.nextLine().trim();
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                Date date = format.parse(result);
-                if (result.equalsIgnoreCase(format.format(date))) {
-                    return result;
-                } else {
-                    System.out.println(errorDateMsg);
-                }
-            } catch (ParseException e) {
-                System.out.println(errorDateMsg);
+                int result = Integer.parseInt(sc.nextLine());
+                return result;
+            } catch (NumberFormatException e) {
+                System.err.println("Integer only!");
             }
         }
+
     }
-
-    public static String getMail(String mess, String error) {
-
-        String output = null;
-        while (true) {
-            System.out.print(mess);
-            output = sc.nextLine();
-            if (output.matches(EMAIL_VERIFICATION)) {
-                return output;
-            } else {
-                System.err.println(error);
-            }
-        }
-    }
-
     public static String getStringByRegex(String mess, String error, String regex) {
 
         String output = null;
