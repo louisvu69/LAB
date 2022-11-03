@@ -5,20 +5,48 @@
  */
 package ui;
 
+import controller.Controller;
+import utils.InputUtils;
+
 /**
  *
- * @author My PC
+ * @author ducta
  */
 public class Main {
 
-    public static void main(String[] args) {
-        Menu menuList = new Menu();
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws Exception {
+        // TODO code application logic here
+        Controller controler = new Controller();
+        Menu menu = new Menu();
+        menu.Add("======Calculator program======");
+        menu.Add("1. Addition Matrix");
+        menu.Add("2. Subtraction");
+        menu.Add("3. Multiplication Matrix");
+        menu.Add("4. Quit");
+        int choose = 0;
         do {
-            menuList.displayMenu();
-            int choice = menuList.getChoice();
-            menuList.run(choice);
-        } while (!menuList.isExit);
-
+            menu.Display();
+            choose = InputUtils.inputNum("Your choice: ");
+            switch (choose) {
+                case 1:
+                    System.out.println("--------Addition--------");
+                    controler.addMatrix();
+                    break;
+                case 2:
+                    System.out.println("--------Subtraction--------");
+                    controler.subtracMatrix();
+                    break;
+                case 3:
+                    System.out.println("--------Multiplication--------");
+                    controler.mulMatrix();
+                    break;
+                case 4:
+                    break;
+            }
+        } while (choose != 4);
     }
 
 }
